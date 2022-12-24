@@ -81,202 +81,198 @@ class _FormPageState extends State<FormPage> {
     // super.build(context);
     return Scaffold(
       // backgroundColor: Colors.blue.shade100,
-      appBar: AppBar(
-        title: const Text('Customer Verification Form'),
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Customer Verification Form'),
+      // ),
       body: Form(
         key: _formKey,
-        child: Container(
-          margin: EdgeInsets.symmetric(horizontal: _getSideMargin()),
-          child: ListView(
-            children: [
-              Column(
-                children: [
-                  Container(
-                    margin: const EdgeInsets.all(15),
-                    padding: const EdgeInsets.all(5.234589786),
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemCount: _getLength(),
-                          itemBuilder: (context, index) {
-                            var field = _pageData;
-                            if (field[index] != null &&
-                                field[index]['widget'] == 'text') {
-                              return TextTitle(
-                                widgetData: field[index],
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'text-input') {
-                              return FormTextInput(
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                widgetJson: field[index],
-                                provider: provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'address') {
-                              return GetUserLocation(
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                widgetJson: field[index],
-                                provider: provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'toggle-input') {
-                              return ToggleButton(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'dropdown') {
-                              return DropdownMenu(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'date-time') {
-                              return DateTimePicker(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'file') {
-                              return FormFileInput(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'image') {
-                              return FormImageInput(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'table') {
-                              return FormTableInput(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'email') {
-                              return FormEmailTextInput(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'phone') {
-                              return FormPhoneNumberInput(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'pan') {
-                              return FormPanNumberInput(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else if (field[index] != null &&
-                                field[index]['widget'] == 'aadhar') {
-                              return FormAadharNumberInput(
-                                widgetJson: field[index],
-                                pageId: widget.currentPage.toString(),
-                                fieldId: index.toString(),
-                                provider: widget.provider,
-                              );
-                            } else {
-                              return Container(
-                                margin: const EdgeInsets.only(top: 15),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 20),
-                                decoration:
-                                    containerElevationDecoration.copyWith(
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.shade500,
-                                      offset: const Offset(0.0, 0.5), //(x,y)
-                                      blurRadius: 0.0,
-                                    ),
-                                  ],
-                                ),
-                                child: Row(
-                                  children: const [
-                                    Icon(
-                                      Icons.error_outline,
+        child: ListView(
+          children: [
+            Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(5.234589786),
+                  child: Column(
+                    children: [
+                      ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: _getLength(),
+                        itemBuilder: (context, index) {
+                          var field = _pageData;
+                          if (field[index] != null &&
+                              field[index]['widget'] == 'text') {
+                            return TextTitle(
+                              widgetData: field[index],
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'text-input') {
+                            return FormTextInput(
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              widgetJson: field[index],
+                              provider: provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'address') {
+                            return GetUserLocation(
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              widgetJson: field[index],
+                              provider: provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'toggle-input') {
+                            return ToggleButton(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'dropdown') {
+                            return DropdownMenu(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'date-time') {
+                            return DateTimePicker(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'file') {
+                            return FormFileInput(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'image') {
+                            return FormImageInput(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'table') {
+                            return FormTableInput(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'email') {
+                            return FormEmailTextInput(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'phone') {
+                            return FormPhoneNumberInput(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'pan') {
+                            return FormPanNumberInput(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'aadhar') {
+                            return FormAadharNumberInput(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
+                          } else {
+                            return Container(
+                              margin: const EdgeInsets.only(top: 15),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10, vertical: 20),
+                              decoration: containerElevationDecoration.copyWith(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.shade500,
+                                    offset: const Offset(0.0, 0.5), //(x,y)
+                                    blurRadius: 0.0,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: const [
+                                  Icon(
+                                    Icons.error_outline,
+                                    color: CupertinoColors.systemRed,
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text(
+                                    'Invalid Form Field',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
                                       color: CupertinoColors.systemRed,
                                     ),
-                                    SizedBox(width: 10),
-                                    Text(
-                                      'Invalid Form Field',
-                                      style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
-                                        color: CupertinoColors.systemRed,
-                                      ),
-                                      textAlign: TextAlign.start,
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 15),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            widget.currentPage > 0
-                                ? ElevatedButton(
-                                    onPressed: () {
-                                      widget.pageController
-                                          .jumpToPage(widget.currentPage - 1);
-                                    },
-                                    child: const Center(
-                                      child: Text('Back'),
-                                    ),
-                                  )
-                                : const Text(''),
-                            const SizedBox(width: 15),
-                            widget.currentPage < widget.totalPages - 1
-                                ? ElevatedButton(
-                                    onPressed: () async {
-                                      await _validateForm(context);
-                                    },
-                                    child: const Center(
-                                      child: Text('Next'),
-                                    ),
-                                  )
-                                : const Text(''),
-                          ],
-                        ),
-                        const SizedBox(height: 30),
-                      ],
-                    ),
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 15),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          widget.currentPage > 0
+                              ? ElevatedButton(
+                                  onPressed: () {
+                                    widget.pageController
+                                        .jumpToPage(widget.currentPage - 1);
+                                  },
+                                  child: const Center(
+                                    child: Text('Back'),
+                                  ),
+                                )
+                              : const Text(''),
+                          const SizedBox(width: 15),
+                          widget.currentPage < widget.totalPages - 1
+                              ? ElevatedButton(
+                                  onPressed: () async {
+                                    await _validateForm(context);
+                                  },
+                                  child: const Center(
+                                    child: Text('Next'),
+                                  ),
+                                )
+                              : const Text(''),
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                    ],
                   ),
-                ],
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

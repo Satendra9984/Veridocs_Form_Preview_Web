@@ -62,13 +62,16 @@ class _VeridocsPreviewState extends State<VeridocsPreview> {
       providers: [ChangeNotifierProvider(create: (context) => FormProvider())],
       child: MaterialApp(
         title: 'Books App',
-        home: const HomePage(),
+        // home: const HomePage(),
+        routes: {
+          '/': (context) => HomePage(),
+        },
         onGenerateRoute: (settings) {
           // Handle '/'
           debugPrint('onGenerateRoute\n');
-          if (settings.name == '/') {
-            return MaterialPageRoute(builder: (context) => HomePage());
-          }
+          // if (settings.name == '/') {
+          //   return MaterialPageRoute(builder: (context) => HomePage());
+          // }
 
           // Handle '/details/:id'
           var uri = Uri.parse(settings.name!);
@@ -87,7 +90,7 @@ class _VeridocsPreviewState extends State<VeridocsPreview> {
                 builder: (context) => FormResultHomePage(caseId: id));
           }
 
-          return MaterialPageRoute(builder: (context) => HomePage());
+          // return MaterialPageRoute(builder: (context) => HomePage());
         },
         debugShowCheckedModeBanner: false,
       ),

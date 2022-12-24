@@ -317,77 +317,79 @@ class _FormFileInputState extends State<FormFileInput> {
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(width: 5),
-                                Icon(
-                                  Icons.file_copy_sharp,
-                                  color: Colors.redAccent,
-                                ),
-                                SizedBox(width: 5),
-
-                                TextButton(
-                                  onPressed: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          FutureProgressDialog(
-                                        openFile(index),
-                                        message: Text(
-                                          'Processing',
-                                          style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.w500,
+                            child: Expanded(
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const SizedBox(width: 5),
+                                  const Icon(
+                                    Icons.file_copy_sharp,
+                                    color: Colors.redAccent,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  TextButton(
+                                    onPressed: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            FutureProgressDialog(
+                                          openFile(index),
+                                          message: const Text(
+                                            'Processing',
+                                            style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                           ),
                                         ),
+                                      );
+                                    },
+                                    child: Text(
+                                      'File ${index + 1}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
                                       ),
-                                    );
-                                  },
-                                  child: Text(
-                                    'File ${index + 1}',
-                                    style: TextStyle(
-                                      fontSize: 16,
                                     ),
                                   ),
-                                ),
-                                // SizedBox(width: 0),
-                                IconButton(
-                                  onPressed: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) =>
-                                          _showDeleteFileAlertDialog(
-                                        index,
-                                      ),
-                                    ).then((delete) {
-                                      if (delete != null && delete == true) {
-                                        // debugPrint('delete choice = $delete');
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) =>
-                                              FutureProgressDialog(
-                                            _deleteFile(index),
-                                            message: Center(
-                                              child: Text(
-                                                'Deleting File ${index + 1}',
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w500,
+                                  IconButton(
+                                    onPressed: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            _showDeleteFileAlertDialog(
+                                          index,
+                                        ),
+                                      ).then((delete) {
+                                        if (delete != null && delete == true) {
+                                          // debugPrint('delete choice = $delete');
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                FutureProgressDialog(
+                                              _deleteFile(index),
+                                              message: Center(
+                                                child: Text(
+                                                  'Deleting File ${index + 1}',
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        );
-                                      }
-                                    });
-                                  },
-                                  icon: Icon(
-                                    Icons.cancel,
+                                          );
+                                        }
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.cancel,
+                                    ),
+                                    splashRadius: 10.0,
                                   ),
-                                  splashRadius: 10.0,
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           );
                         },
