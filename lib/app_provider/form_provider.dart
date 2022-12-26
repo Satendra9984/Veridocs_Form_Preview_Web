@@ -12,6 +12,11 @@ class FormProvider extends ChangeNotifier {
     this._assignmentId = id;
   }
 
+  String _agencyId = '';
+  String get agencyId => _agencyId;
+  void set setAgencyId(String id) {
+    this._agencyId = id;
+  }
   // updateData(
   //     {required String pageId,
   //     required String fieldId,

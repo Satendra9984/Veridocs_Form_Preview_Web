@@ -1,18 +1,16 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../app_provider/form_provider.dart';
 import 'form_page.dart';
-import 'form_submit_screen.dart';
 
 class InitialFormPageView extends StatefulWidget {
   final Map<String, dynamic> pagesData;
   final String caseId;
-  final bool isPreview;
   const InitialFormPageView({
     Key? key,
     required this.pagesData,
     required this.caseId,
-    required this.isPreview,
   }) : super(key: key);
 
   @override
@@ -24,20 +22,29 @@ class _InitialFormPageViewState extends State<InitialFormPageView> {
 
   late FormProvider _formProvider;
 
-  void initialize() async {
+  Future<void> initialize() async {
     await _formProvider.initializeResponse();
+    // set agency Id
+    await FirebaseFirestore.instance
+        .collection('assignment')
+        .doc(widget.caseId)
+        .get()
+        .then((value) {
+      if (value.data() != null) {
+        Map<String, dynamic> data = value.data()!;
+        _formProvider.setAgencyId = data['agency'];
+      }
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    debugPrint('page initial\n');
     _pageController = PageController();
   }
 
   @override
   void didChangeDependencies() {
-    // TODO: implement didChangeDependencies
     _formProvider = Provider.of<FormProvider>(context);
     _formProvider.setAssignmentId = widget.caseId;
     initialize();
@@ -52,8 +59,6 @@ class _InitialFormPageViewState extends State<InitialFormPageView> {
 
   @override
   void dispose() {
-    // _pageController.dispose();
-    // _formProvider.dispose();
     super.dispose();
   }
 
@@ -65,48 +70,42 @@ class _InitialFormPageViewState extends State<InitialFormPageView> {
       return screen;
     }
     for (int i = 0; i < pageData.length; i++) {
-      debugPrint('pageNumber --> ${i}\n');
+      // debugPrint('pageNumber --> ${i}\n');
       screen.add(
         FormPage(
           provider: _formProvider,
           singlePageData: pageData[i],
           currentPage: i,
-          totalPages: pageData.length + 1,
+          totalPages: pageData.length,
           pageController: _pageController,
+          agencyId: _formProvider.agencyId,
         ),
       );
     }
-    screen.add(
-      FormSubmitPage(
-        provider: _formProvider,
-        currentPage: pageData.length,
-        pageController: _pageController,
-        totalPages: pageData.length + 1,
-      ),
-    );
     return screen;
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-        future: _formProvider.initializeResponse(),
-        builder: (context, AsyncSnapshot<void> snap) {
-          if (snap.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else {
-            return PageView(
-              scrollDirection: Axis.horizontal,
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _pageController,
-              children: _getFormPages(widget.pagesData),
-              onPageChanged: (currentPage) {
-                // debugPrint('page changed --> $currentPage}');
-              },
-            );
-          }
-        });
+      future: initialize(),
+      builder: (context, AsyncSnapshot<void> snap) {
+        if (snap.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else {
+          return PageView(
+            scrollDirection: Axis.horizontal,
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _pageController,
+            children: _getFormPages(widget.pagesData),
+            onPageChanged: (currentPage) {
+              // debugPrint('page changed --> $currentPage}');
+            },
+          );
+        }
+      },
+    );
   }
 }

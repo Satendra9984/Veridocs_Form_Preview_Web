@@ -47,7 +47,7 @@ class _FormResultHomePageState extends State<FormResultHomePage> {
             return InitialFormPageView(
               caseId: widget.caseId,
               pagesData: data,
-              isPreview: true,
+              // isPreview: true,
             );
           } else if (snapshot == null) {
             return const Center(

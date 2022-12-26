@@ -1,7 +1,5 @@
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
-
-import '../app_services/database/firestore_services.dart';
 import 'initial_form_page.dart';
 
 class FormPreviewHomePage extends StatefulWidget {
@@ -54,7 +52,6 @@ class _FormPreviewHomePageState extends State<FormPreviewHomePage> {
             return InitialFormPageView(
               pagesData: newData,
               caseId: widget.agencyId,
-              isPreview: true,
             );
           } else if (snapshot == null) {
             // debugPrint('fine 75');

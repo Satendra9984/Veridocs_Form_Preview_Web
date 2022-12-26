@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:future_progress_dialog/future_progress_dialog.dart';
+import 'package:path/path.dart';
 import '../app_provider/form_provider.dart';
+import '../app_services/database/firestore_services.dart';
 import '../app_utils/app_constants.dart';
 import '../form_widgets/date_time.dart';
 import '../form_widgets/dropdown.dart';
@@ -13,16 +15,18 @@ import '../form_widgets/form_text_input.dart';
 import '../form_widgets/image_input.dart';
 import '../form_widgets/location_input.dart';
 import '../form_widgets/phone_number_input.dart';
+import '../form_widgets/signature.dart';
 import '../form_widgets/table.dart';
 import '../form_widgets/text.dart';
 import '../form_widgets/toggle_button.dart';
 
 class FormPage extends StatefulWidget {
-  var singlePageData;
+  final Map<String, dynamic> singlePageData;
   final PageController pageController;
   final int currentPage;
   final int totalPages;
   final FormProvider provider;
+  final String agencyId;
 
   FormPage({
     Key? key,
@@ -31,6 +35,7 @@ class FormPage extends StatefulWidget {
     required this.pageController,
     required this.totalPages,
     required this.provider,
+    required this.agencyId,
   }) : super(key: key);
 
   @override
@@ -46,14 +51,14 @@ class _FormPageState extends State<FormPage> {
   @override
   void initState() {
     super.initState();
-    debugPrint('form page has been initialized page ${widget.currentPage}');
+    // debugPrint('form page has been initialized page ${widget.currentPage}');
     provider = widget.provider;
     _initializePageData();
   }
 
   @override
   void dispose() {
-    debugPrint('form page has been disposed page ${widget.currentPage}');
+    // debugPrint('form page has been disposed page ${widget.currentPage}');
     super.dispose();
   }
 
@@ -66,24 +71,14 @@ class _FormPageState extends State<FormPage> {
     return wid.length;
   }
 
-  double _getSideMargin() {
-    double width = MediaQuery.of(context).size.width;
-    // debugPrint('Screen size-> $width content size-> ${width * 0.4}');
-    double widgetSize = width * 4;
-    if (widgetSize < 450.0) {
-      return 0;
-    }
-    return width * 0.3;
-  }
-
   @override
   Widget build(BuildContext context) {
     // super.build(context);
     return Scaffold(
       // backgroundColor: Colors.blue.shade100,
-      // appBar: AppBar(
-      //   title: const Text('Customer Verification Form'),
-      // ),
+      appBar: AppBar(
+        title: const Text('Customer Verification Form'),
+      ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -202,6 +197,14 @@ class _FormPageState extends State<FormPage> {
                               fieldId: index.toString(),
                               provider: widget.provider,
                             );
+                          } else if (field[index] != null &&
+                              field[index]['widget'] == 'signature') {
+                            return FormSignature(
+                              widgetJson: field[index],
+                              pageId: widget.currentPage.toString(),
+                              fieldId: index.toString(),
+                              provider: widget.provider,
+                            );
                           } else {
                             return Container(
                               margin: const EdgeInsets.only(top: 15),
@@ -242,28 +245,30 @@ class _FormPageState extends State<FormPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          widget.currentPage > 0
-                              ? ElevatedButton(
-                                  onPressed: () {
-                                    widget.pageController
-                                        .jumpToPage(widget.currentPage - 1);
-                                  },
-                                  child: const Center(
-                                    child: Text('Back'),
-                                  ),
-                                )
-                              : const Text(''),
+                          if (widget.currentPage > 0)
+                            ElevatedButton(
+                              onPressed: () {
+                                widget.pageController
+                                    .jumpToPage(widget.currentPage - 1);
+                              },
+                              child: const Center(
+                                child: Text('Back'),
+                              ),
+                            ),
                           const SizedBox(width: 15),
-                          widget.currentPage < widget.totalPages - 1
-                              ? ElevatedButton(
-                                  onPressed: () async {
-                                    await _validateForm(context);
-                                  },
-                                  child: const Center(
-                                    child: Text('Next'),
-                                  ),
-                                )
-                              : const Text(''),
+                          if (widget.currentPage <= widget.totalPages)
+                            ElevatedButton(
+                              onPressed: () async {
+                                await _validateSubmitPage();
+                              },
+                              child: Center(
+                                child: Text(
+                                  widget.currentPage == widget.totalPages - 1
+                                      ? 'Submit'
+                                      : 'Next',
+                                ),
+                              ),
+                            ),
                         ],
                       ),
                       const SizedBox(height: 30),
@@ -278,19 +283,84 @@ class _FormPageState extends State<FormPage> {
     );
   }
 
-  Future<void> _validateForm(BuildContext cont) async {
+  Future<void> _validateSubmitPage() async {
     // if (_formKey.currentState!.validate()) {
-    //   ScaffoldMessenger.of(cont).showSnackBar(
-    //     const SnackBar(
-    //       content: Text('Submitting data'),
-    //     ),
-    //   );
-    widget.pageController.jumpToPage(widget.currentPage + 1);
+    //   debugPrint(
+    //       'current page -> ${widget.currentPage} total, ${widget.totalPages}');
+    //   if (widget.currentPage == widget.totalPages - 1) {
+    //     await showDialog(
+    //         context: this.context,
+    //         builder: (context) {
+    //           return _showFinalSubmitAlertDialog();
+    //         }).then(
+    //           (submit) {
+    //         if (submit != null && submit == true) {
+    //           FutureProgressDialog(
+    //             _finalSubmitForm(),
+    //             message: Text(
+    //                 'Submitting Form. Please wait and do not touch anywhere'),
+    //           );
+    //           Navigator.pop(this.context, true);
+    //         }
+    //       },
+    //     );
+    //   } else {
+    //     await widget.provider.saveDraftData().then(
+    //           (value) {
+    //         widget.pageController.jumpToPage(widget.currentPage + 1);
+    //       },
+    //     );
+    //   }
     // }
-    // await widget.provider.saveDraftData();
   }
 
-  // @override
-  // TODO: implement wantKeepAlive
-  // bool get wantKeepAlive => true;
+  // Future<void> _finalSubmitForm() async {
+  //   await widget.provider.saveDraftData().then(
+  //         (value) async {
+  //       // update status
+  //       await FirestoreServices.updateAssignmentStatus(
+  //         caseId: widget.provider.assignmentId,
+  //         status: 'submitted',
+  //         agencyId: widget.agencyId,
+  //       );
+  //     },
+  //   );
+  // }
+
+  Widget _showFinalSubmitAlertDialog() {
+    return AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      content: Text(
+        'Are you sure to submit form? Once submitted you can\'t edit form.Please Re-Check the form.',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      actions: [
+        ElevatedButton(
+          onPressed: () async {
+            Navigator.pop(this.context, true);
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.redAccent.shade200,
+            elevation: 5,
+          ),
+          child: Text('Yes'),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            Navigator.pop(this.context);
+          },
+          style: ElevatedButton.styleFrom(
+            // backgroundColor: Colors.redAccent.shade200,
+            elevation: 5,
+          ),
+          child: Text('Cancel'),
+        ),
+      ],
+    );
+  }
 }
