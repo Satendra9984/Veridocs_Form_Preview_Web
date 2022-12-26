@@ -91,7 +91,7 @@ class _InitialFormPageViewState extends State<InitialFormPageView> {
       future: initialize(),
       builder: (context, AsyncSnapshot<void> snap) {
         if (snap.connectionState == ConnectionState.waiting) {
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(),
           );
         } else {

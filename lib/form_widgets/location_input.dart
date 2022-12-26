@@ -167,6 +167,7 @@ class _GetUserLocationState extends State<GetUserLocation> {
                                   }
                                 },
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
                                       "Location: ${_currentLocation?.latitude}, ${_currentLocation?.longitude}",
@@ -175,12 +176,6 @@ class _GetUserLocationState extends State<GetUserLocation> {
                                       ),
                                     ),
                                     const SizedBox(height: 5),
-                                    Text(
-                                      "Address: $_address",
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -298,13 +293,13 @@ class _GetUserLocationState extends State<GetUserLocation> {
     // return _locationData;
   }
 
-  Future<String> _getAddress(double? lat, double? lang) async {
-    if (lat == null || lang == null) return "";
-    GeoCode geoCode = GeoCode();
-    debugPrint("lat $lat, long $lang");
-    Address address =
-        await geoCode.reverseGeocoding(latitude: lat, longitude: lang);
-
-    return "${address.streetAddress}, ${address.city}, ${address.countryName}, ${address.postal}";
-  }
+  // Future<String> _getAddress(double? lat, double? lang) async {
+  //   if (lat == null || lang == null) return "";
+  //   GeoCode geoCode = GeoCode();
+  //   debugPrint("lat $lat, long $lang");
+  //   Address address =
+  //       await geoCode.reverseGeocoding(latitude: lat, longitude: lang);
+  //
+  //   return "${address.streetAddress}, ${address.city}, ${address.countryName}, ${address.postal}";
+  // }
 }

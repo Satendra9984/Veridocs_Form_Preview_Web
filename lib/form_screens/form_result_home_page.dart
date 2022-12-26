@@ -30,35 +30,44 @@ class _FormResultHomePageState extends State<FormResultHomePage> {
     super.dispose();
   }
 
+  Future<bool> _onWillPop() async {
+    Navigator.of(context).popUntil(ModalRoute.withName(''));
+    // Navigator.of(context).p
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: FutureBuilder(
-        future: FirestoreServices.getFormDataById(widget.caseId),
-        builder: (context, AsyncSnapshot<Map<String, dynamic>?> form) {
-          var snapshot = form.data;
-          if (form.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (form.hasData && snapshot != null) {
-            final data = Map<String, dynamic>.from(snapshot);
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: FutureBuilder(
+          future: FirestoreServices.getFormDataById(widget.caseId),
+          builder: (context, AsyncSnapshot<Map<String, dynamic>?> form) {
+            var snapshot = form.data;
+            if (form.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (form.hasData && snapshot != null) {
+              final data = Map<String, dynamic>.from(snapshot);
 
-            return InitialFormPageView(
-              caseId: widget.caseId,
-              pagesData: data,
-              // isPreview: true,
-            );
-          } else if (snapshot == null) {
-            return const Center(
-              child: Text('Form will be displayed here'),
-            );
-          } else {
-            return const Center(
-              child: Text('Data not loaded'),
-            );
-          }
-        },
+              return InitialFormPageView(
+                caseId: widget.caseId,
+                pagesData: data,
+                // isPreview: true,
+              );
+            } else if (snapshot == null) {
+              return const Center(
+                child: Text('Form will be displayed here'),
+              );
+            } else {
+              return const Center(
+                child: Text('Data not loaded'),
+              );
+            }
+          },
+        ),
       ),
     );
   }

@@ -28,7 +28,7 @@ class FormPage extends StatefulWidget {
   final FormProvider provider;
   final String agencyId;
 
-  FormPage({
+  const FormPage({
     Key? key,
     required this.currentPage,
     required this.singlePageData,
@@ -71,14 +71,20 @@ class _FormPageState extends State<FormPage> {
     return wid.length;
   }
 
+  double _getWidth() {
+    double width = MediaQuery.of(this.context).size.width;
+
+    return 450.0;
+  }
+
   @override
   Widget build(BuildContext context) {
     // super.build(context);
     return Scaffold(
       // backgroundColor: Colors.blue.shade100,
-      appBar: AppBar(
-        title: const Text('Customer Verification Form'),
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Customer Verification Form'),
+      // ),
       body: Form(
         key: _formKey,
         child: ListView(
@@ -86,8 +92,10 @@ class _FormPageState extends State<FormPage> {
             Column(
               children: [
                 Container(
+                  width: _getWidth(),
                   margin: const EdgeInsets.all(15),
                   padding: const EdgeInsets.all(5.234589786),
+                  alignment: Alignment.center,
                   child: Column(
                     children: [
                       ListView.builder(
