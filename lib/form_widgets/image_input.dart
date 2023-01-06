@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../app_provider/form_provider.dart';
 import '../app_services/database/uploader.dart';
 import '../app_utils/app_constants.dart';
@@ -27,7 +28,7 @@ class FormImageInput extends StatefulWidget {
 
 class _FormImageInputState extends State<FormImageInput> {
   /// Actual images data
-  List<Uint8List> _imageFileList = [];
+  final List<Uint8List> _imageFileList = [];
 
   /// Because after taking photo build is called again so images are added already on top of existing images
   bool _isListsInitializedAlready = false;
@@ -36,7 +37,7 @@ class _FormImageInputState extends State<FormImageInput> {
   int _imageIndex = 0;
 
   /// Images paths list for adding in form response data
-  List<String> _imageFileListPaths = [];
+  final List<String> _imageFileListPaths = [];
 
   /// Add list of Images that we got from local storage/camera
   Future<void> _addImageToList(List<Uint8List> image) async {
@@ -51,13 +52,13 @@ class _FormImageInputState extends State<FormImageInput> {
   }
 
   Future<void> _addImageToDatabase(Uint8List image, int index) async {
-    String _dbPath =
-        '${widget.provider.assignmentId}/${widget.pageId},${widget.fieldId}/${_imageIndex}';
+    String dbPath =
+        '${widget.provider.assignmentId}/${widget.pageId},${widget.fieldId}/$_imageIndex';
     UploadTask? task =
-        await FileUploader.uploadFile(dbPath: _dbPath, fileData: image);
+        await FileUploader.uploadFile(dbPath: dbPath, fileData: image);
 
     if (task != null) {
-      _imageFileListPaths.add(_dbPath);
+      _imageFileListPaths.add(dbPath);
       await _updateData();
       _imageIndex++;
     }
@@ -74,9 +75,9 @@ class _FormImageInputState extends State<FormImageInput> {
 
   /// delete image from database
   Future<void> _deleteImage(int index) async {
-    String _dbPath = _imageFileListPaths[index];
+    String dbPath = _imageFileListPaths[index];
 
-    await FirebaseStorage.instance.ref(_dbPath).delete().then((value) async {
+    await FirebaseStorage.instance.ref(dbPath).delete().then((value) async {
       setState(() {
         _imageFileList.removeAt(index);
         _imageFileListPaths.removeAt(index);
@@ -92,7 +93,7 @@ class _FormImageInputState extends State<FormImageInput> {
           content: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Expanded(
+              const Expanded(
                 flex: 2,
                 child: Icon(
                   Icons.error_outline,
@@ -100,12 +101,12 @@ class _FormImageInputState extends State<FormImageInput> {
                   color: Colors.redAccent,
                 ),
               ),
-              SizedBox(width: 10),
+              const SizedBox(width: 10),
               Expanded(
                 flex: 8,
                 child: Text(
                   'File ${index + 1} not deleted, try after some time',
-                  style: TextStyle(
+                  style: const TextStyle(
                     // color: Colors.redAccent,
                     fontWeight: FontWeight.w500,
                     fontSize: 18,
@@ -140,7 +141,7 @@ class _FormImageInputState extends State<FormImageInput> {
       ),
       content: Text(
         'Delete Image ${index + 1} ?',
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
@@ -148,24 +149,24 @@ class _FormImageInputState extends State<FormImageInput> {
       actions: [
         ElevatedButton(
           onPressed: () async {
-            await _deleteImage(index);
-            Navigator.pop(context);
+            await _deleteImage(index).then((value) {
+              Navigator.pop(context);
+            });
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.redAccent.shade200,
             elevation: 5,
           ),
-          child: Text('Yes'),
+          child: const Text('Yes'),
         ),
         ElevatedButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
           style: ElevatedButton.styleFrom(
-            // backgroundColor: Colors.redAccent.shade200,
             elevation: 5,
           ),
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
       ],
     );
@@ -175,7 +176,6 @@ class _FormImageInputState extends State<FormImageInput> {
   int _getCrossAxisCount() {
     try {
       Size size = MediaQuery.of(context).size;
-      // double height = size.height;
       double width = size.width;
       int count = width ~/ 150;
       return count;
@@ -186,7 +186,6 @@ class _FormImageInputState extends State<FormImageInput> {
 
   /// Get Initial Images From FirebaseStorage
   Future<void> _setInitialImagesData() async {
-    // debugPrint('setInitialImageData called\n');
     if (_isListsInitializedAlready == false) {
       dynamic listOfImagesFromDatabase =
           widget.provider.getResult['${widget.pageId},${widget.fieldId}'];
@@ -194,13 +193,11 @@ class _FormImageInputState extends State<FormImageInput> {
       List<dynamic>? imageList =
           List<dynamic>.from(listOfImagesFromDatabase ?? []);
       if (imageList.isNotEmpty) {
-        var ref = await FirebaseStorage.instance.ref();
-        _imageFileList.clear();
-        _imageFileListPaths.clear();
+        Reference ref = FirebaseStorage.instance.ref();
+
         for (var path in imageList) {
-          await ref.child(path).getData().then((value) {
+          await ref.child(path).getDownloadURL().then((value) async {
             if (value != null) {
-              _imageFileList.add(value);
               _imageFileListPaths.add(path);
             }
           });
@@ -245,14 +242,6 @@ class _FormImageInputState extends State<FormImageInput> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-          // TextSpan(
-          //   text: ' *',
-          //   style: TextStyle(
-          //     color: Colors.red,
-          //     fontSize: 18.0,
-          //     fontWeight: FontWeight.bold,
-          //   ),
-          // ),
         ],
       ),
     );
@@ -294,10 +283,10 @@ class _FormImageInputState extends State<FormImageInput> {
                     ),
 
                     /// Display Images
-                    if (_imageFileList.isNotEmpty)
+                    if (_imageFileListPaths.isNotEmpty)
                       GridView.builder(
                         shrinkWrap: true,
-                        itemCount: _imageFileList.length,
+                        itemCount: _imageFileListPaths.length,
                         itemBuilder: (context, index) {
                           return Container(
                             decoration: BoxDecoration(
@@ -309,28 +298,31 @@ class _FormImageInputState extends State<FormImageInput> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(width: 5),
-                                Icon(
+                                const SizedBox(width: 5),
+                                const Icon(
                                   Icons.image,
                                   color: Colors.redAccent,
                                 ),
-                                SizedBox(width: 5),
-
+                                const SizedBox(width: 5),
                                 TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
                                     showDialog(
                                         context: context,
                                         builder: (context) =>
                                             _showImagesInPopUp(index));
+                                    // debugPrint(
+                                    //     'launching path-> ${_imageFileListPaths[index]}');
+                                    // await launchUrl(
+                                    //     Uri(path: _imageFileListPaths[index]));
                                   },
                                   child: Text(
                                     'Image ${index + 1}',
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 16,
                                     ),
                                   ),
                                 ),
-                                // SizedBox(width: 0),
+                                const SizedBox(width: 0),
                                 IconButton(
                                   onPressed: () async {
                                     showDialog(
@@ -339,7 +331,7 @@ class _FormImageInputState extends State<FormImageInput> {
                                           _showDeleteImageAlertDialog(index),
                                     );
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.cancel,
                                   ),
                                   splashRadius: 10.0,
@@ -357,7 +349,8 @@ class _FormImageInputState extends State<FormImageInput> {
                         ),
                       ),
 
-                    if (_imageFileList.isNotEmpty) SizedBox(height: 10),
+                    if (_imageFileListPaths.isNotEmpty)
+                      const SizedBox(height: 10),
 
                     /// For adding new images
                     if (_imageFileList.length < 3)
@@ -420,15 +413,13 @@ class _FormImageInputState extends State<FormImageInput> {
           children: [
             Text(
               'Image ${index + 1}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 10),
-            Image.memory(
-              _imageFileList[index],
-            ),
+            Image.network(_imageFileListPaths[index]),
           ],
         ),
       ),

@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../app_provider/form_provider.dart';
 import '../app_services/database/uploader.dart';
 import '../app_utils/app_constants.dart';
@@ -43,13 +44,16 @@ class _FormFileInputState extends State<FormFileInput> {
   }
 
   int _getCrossAxisCount() {
-    Size size = MediaQuery.of(context).size;
+    double width = MediaQuery.of(context).size.width;
+    double margin = width * 0.30;
 
-    double width = size.width;
-
+    if (width - 2 * margin < 500) {
+      margin = (width - 500) / 2;
+    }
+    width -= 2 * margin;
     int wid = width.toInt();
     int count = (wid) ~/ 150;
-    // debugPrint('count --> $count');
+    debugPrint('count --> $count');
     return count;
   }
 
@@ -58,7 +62,7 @@ class _FormFileInputState extends State<FormFileInput> {
 
     return RichText(
       text: TextSpan(
-        text: '$label',
+        text: label,
         style: const TextStyle(
           fontSize: 17,
           fontWeight: FontWeight.w500,
@@ -75,14 +79,6 @@ class _FormFileInputState extends State<FormFileInput> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-          // TextSpan(
-          //   text: ' *',
-          //   style: TextStyle(
-          //     color: Colors.red,
-          //     fontSize: 18.0,
-          //     fontWeight: FontWeight.bold,
-          //   ),
-          // ),
         ],
       ),
     );
@@ -97,25 +93,25 @@ class _FormFileInputState extends State<FormFileInput> {
       PlatformFile file = fileGet.files.first;
       // debugPrint('adding file of extension ${file!.extension}');
       Uint8List? fileBytes = await File(file.path!).readAsBytes();
-      String _dbPath =
-          '${widget.provider.assignmentId}/${widget.pageId},${widget.fieldId}/${_fileIndex}';
+      String dbPath =
+          '${widget.provider.assignmentId}/${widget.pageId},${widget.fieldId}/$_fileIndex';
 
       // debugPrint('uploading file at ${_dbPath}');
 
       showDialog(
         context: context,
         builder: (context) => FutureProgressDialog(
-          FileUploader.uploadFile(dbPath: _dbPath, fileData: fileBytes)
+          FileUploader.uploadFile(dbPath: dbPath, fileData: fileBytes)
               .then((task) async {
             if (task != null) {
               setState(() {
-                _filesList.add(_dbPath);
+                _filesList.add(dbPath);
               });
               _fileIndex++;
               await _updateData();
             }
           }),
-          message: Center(
+          message: const Center(
             child: Text(
               'Adding File',
               style: TextStyle(
@@ -126,17 +122,6 @@ class _FormFileInputState extends State<FormFileInput> {
           ),
         ),
       );
-
-      // await FileUploader.uploadFile(dbPath: _dbPath, fileData: fileBytes)
-      //     .then((task) async {
-      //   if (task != null) {
-      //     setState(() {
-      //       _filesList.add(_dbPath);
-      //     });
-      //     _fileIndex++;
-      //     await _updateData();
-      //   }
-      // });
     }
   }
 
@@ -163,52 +148,6 @@ class _FormFileInputState extends State<FormFileInput> {
       await _updateData();
     }).catchError(
       (e) {
-        // showDialog(
-        //   context: context,
-        //   builder: (context) => AlertDialog(
-        //     shape: RoundedRectangleBorder(
-        //       borderRadius: BorderRadius.circular(15),
-        //     ),
-        //     content: Row(
-        //       mainAxisSize: MainAxisSize.min,
-        //       children: [
-        //         Expanded(
-        //           flex: 2,
-        //           child: Icon(
-        //             Icons.error_outline,
-        //             size: 32,
-        //             color: Colors.redAccent,
-        //           ),
-        //         ),
-        //         SizedBox(width: 10),
-        //         Expanded(
-        //           flex: 8,
-        //           child: Text(
-        //             'File ${index + 1} not deleted, try after some time',
-        //             style: TextStyle(
-        //               // color: Colors.redAccent,
-        //               fontWeight: FontWeight.w500,
-        //               fontSize: 18,
-        //             ),
-        //             softWrap: true,
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //     actions: [
-        //       ElevatedButton(
-        //         onPressed: () {
-        //           Navigator.of(context).pop();
-        //         },
-        //         style: ElevatedButton.styleFrom(
-        //           // backgroundColor: Colors.redAccent.shade200,
-        //           elevation: 5,
-        //         ),
-        //         child: Text('OK'),
-        //       ),
-        //     ],
-        //   ),
-        // );
         return;
       },
     );
@@ -221,7 +160,7 @@ class _FormFileInputState extends State<FormFileInput> {
       ),
       content: Text(
         'Delete File ${index + 1} ?',
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
@@ -235,7 +174,7 @@ class _FormFileInputState extends State<FormFileInput> {
             backgroundColor: Colors.redAccent.shade200,
             elevation: 5,
           ),
-          child: Text('Yes'),
+          child: const Text('Yes'),
         ),
         ElevatedButton(
           onPressed: () {
@@ -245,7 +184,7 @@ class _FormFileInputState extends State<FormFileInput> {
             // backgroundColor: Colors.redAccent.shade200,
             elevation: 5,
           ),
-          child: Text('Cancel'),
+          child: const Text('Cancel'),
         ),
       ],
     );
@@ -271,6 +210,7 @@ class _FormFileInputState extends State<FormFileInput> {
 
   @override
   Widget build(BuildContext context) {
+    _getCrossAxisCount();
     return Container(
       padding: const EdgeInsets.all(15),
       margin: const EdgeInsets.only(bottom: 15),
@@ -305,7 +245,7 @@ class _FormFileInputState extends State<FormFileInput> {
                     const SizedBox(
                       height: 15,
                     ),
-                    if (_filesList.isNotEmpty && _filesList.length > 0)
+                    if (_filesList.isNotEmpty)
                       GridView.builder(
                         shrinkWrap: true,
                         itemCount: _filesList.length,
@@ -317,79 +257,76 @@ class _FormFileInputState extends State<FormFileInput> {
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Expanded(
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const SizedBox(width: 5),
-                                  const Icon(
-                                    Icons.file_copy_sharp,
-                                    color: Colors.redAccent,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  TextButton(
-                                    onPressed: () async {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            FutureProgressDialog(
-                                          openFile(index),
-                                          message: const Text(
-                                            'Processing',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(width: 5),
+                                const Icon(
+                                  Icons.file_copy_sharp,
+                                  color: Colors.redAccent,
+                                ),
+                                const SizedBox(width: 5),
+                                TextButton(
+                                  onPressed: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          FutureProgressDialog(
+                                        openFile(index),
+                                        message: const Text(
+                                          'Processing',
+                                          style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                      );
-                                    },
-                                    child: Text(
-                                      'File ${index + 1}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
                                       ),
+                                    );
+                                  },
+                                  child: Text(
+                                    'File ${index + 1}',
+                                    style: const TextStyle(
+                                      fontSize: 16,
                                     ),
                                   ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) =>
-                                            _showDeleteFileAlertDialog(
-                                          index,
-                                        ),
-                                      ).then((delete) {
-                                        if (delete != null && delete == true) {
-                                          // debugPrint('delete choice = $delete');
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                FutureProgressDialog(
-                                              _deleteFile(index),
-                                              message: Center(
-                                                child: Text(
-                                                  'Deleting File ${index + 1}',
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) =>
+                                          _showDeleteFileAlertDialog(
+                                        index,
+                                      ),
+                                    ).then((delete) {
+                                      if (delete != null && delete == true) {
+                                        // debugPrint('delete choice = $delete');
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              FutureProgressDialog(
+                                            _deleteFile(index),
+                                            message: Center(
+                                              child: Text(
+                                                'Deleting File ${index + 1}',
+                                                style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.w500,
                                                 ),
                                               ),
                                             ),
-                                          );
-                                        }
-                                      });
-                                    },
-                                    icon: Icon(
-                                      Icons.cancel,
-                                    ),
-                                    splashRadius: 10.0,
+                                          ),
+                                        );
+                                      }
+                                    });
+                                  },
+                                  icon: const Icon(
+                                    Icons.cancel,
                                   ),
-                                ],
-                              ),
+                                  splashRadius: 10.0,
+                                ),
+                              ],
                             ),
                           );
                         },
@@ -408,10 +345,10 @@ class _FormFileInputState extends State<FormFileInput> {
                       ElevatedButton(
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('Add File'),
-                            const SizedBox(width: 10),
-                            const Icon(Icons.file_upload_outlined),
+                          children: const [
+                            Text('Add File'),
+                            SizedBox(width: 10),
+                            Icon(Icons.file_upload_outlined),
                           ],
                         ),
                         onPressed: () async {
@@ -480,24 +417,29 @@ class _FormFileInputState extends State<FormFileInput> {
         .ref()
         .child(_filesList[index])
         .getDownloadURL();
+    debugPrint('file url-> $ref');
+    Uri link = Uri.parse(ref);
+    if (await canLaunchUrl(link)) {
+      await launchUrl(link, mode: LaunchMode.platformDefault);
+    }
 
-    http.get(Uri.parse(ref)).then((response) async {
-      Uint8List bodyBytes = response.bodyBytes;
-      final dir = await getExternalStorageDirectory();
-      String fileExtension = await _getFileExtension(index);
-      debugPrint('file extension = $fileExtension');
-      final myImagePath = dir!.path + "/myfile$fileExtension";
-      File imageFile = File(myImagePath);
-      if (!await imageFile.exists()) {
-        imageFile.create(recursive: true);
-      }
-      imageFile.writeAsBytes(bodyBytes);
-      // final result = await OpenFile.open(imageFile.path);
-
-      // setState(() {
-      // String _openResult = "type=${result.type}  message=${result.message}";
-      // });
-      // debugPrint('open rsult = $_openResult');
-    });
+    // http.get(Uri.parse(ref)).then((response) async {
+    //   Uint8List bodyBytes = response.bodyBytes;
+    //   final dir = await getExternalStorageDirectory();
+    //   String fileExtension = await _getFileExtension(index);
+    //   debugPrint('file extension = $fileExtension');
+    //   final myImagePath = "${dir!.path}/myfile$fileExtension";
+    //   File imageFile = File(myImagePath);
+    //   if (!await imageFile.exists()) {
+    //     imageFile.create(recursive: true);
+    //   }
+    //   imageFile.writeAsBytes(bodyBytes);
+    //   // final result = await OpenFile.open(imageFile.path);
+    //
+    //   // setState(() {
+    //   // String _openResult = "type=${result.type}  message=${result.message}";
+    //   // });
+    //   // debugPrint('open rsult = $_openResult');
+    // });
   }
 }

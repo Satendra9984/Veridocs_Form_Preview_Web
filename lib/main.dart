@@ -64,7 +64,7 @@ class _VeridocsPreviewState extends State<VeridocsPreview> {
         title: 'Books App',
         // home: const HomePage(),
         routes: {
-          '/': (context) => HomePage(),
+          '/': (context) => FormResultHomePage(caseId: '20230515180'),
         },
         onGenerateRoute: (settings) {
           // Handle '/'

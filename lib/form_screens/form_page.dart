@@ -73,8 +73,18 @@ class _FormPageState extends State<FormPage> {
 
   double _getWidth() {
     double width = MediaQuery.of(this.context).size.width;
-
+    debugPrint('width $width');
     return 450.0;
+  }
+
+  double _getMargin() {
+    double width = MediaQuery.of(this.context).size.width;
+    double margin = width * 0.30;
+
+    if (width - 2 * margin < 450) {
+      return (width - 500) / 2;
+    }
+    return margin;
   }
 
   @override
@@ -92,8 +102,8 @@ class _FormPageState extends State<FormPage> {
             Column(
               children: [
                 Container(
-                  width: _getWidth(),
-                  margin: const EdgeInsets.all(15),
+                  // width: _getWidth(),
+                  margin: EdgeInsets.symmetric(horizontal: _getMargin()),
                   padding: const EdgeInsets.all(5.234589786),
                   alignment: Alignment.center,
                   child: Column(
@@ -292,83 +302,61 @@ class _FormPageState extends State<FormPage> {
   }
 
   Future<void> _validateSubmitPage() async {
-    // if (_formKey.currentState!.validate()) {
-    //   debugPrint(
-    //       'current page -> ${widget.currentPage} total, ${widget.totalPages}');
-    //   if (widget.currentPage == widget.totalPages - 1) {
-    //     await showDialog(
-    //         context: this.context,
-    //         builder: (context) {
-    //           return _showFinalSubmitAlertDialog();
-    //         }).then(
-    //           (submit) {
-    //         if (submit != null && submit == true) {
-    //           FutureProgressDialog(
-    //             _finalSubmitForm(),
-    //             message: Text(
-    //                 'Submitting Form. Please wait and do not touch anywhere'),
-    //           );
-    //           Navigator.pop(this.context, true);
-    //         }
-    //       },
-    //     );
-    //   } else {
-    //     await widget.provider.saveDraftData().then(
-    //           (value) {
-    //         widget.pageController.jumpToPage(widget.currentPage + 1);
-    //       },
-    //     );
-    //   }
-    // }
-  }
+    if (_formKey.currentState!.validate()) {
+      debugPrint(
+          'current page -> ${widget.currentPage} total, ${widget.totalPages}');
 
-  // Future<void> _finalSubmitForm() async {
-  //   await widget.provider.saveDraftData().then(
-  //         (value) async {
-  //       // update status
-  //       await FirestoreServices.updateAssignmentStatus(
-  //         caseId: widget.provider.assignmentId,
-  //         status: 'submitted',
-  //         agencyId: widget.agencyId,
-  //       );
-  //     },
-  //   );
-  // }
-
-  Widget _showFinalSubmitAlertDialog() {
-    return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      content: Text(
-        'Are you sure to submit form? Once submitted you can\'t edit form.Please Re-Check the form.',
-        style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      actions: [
-        ElevatedButton(
-          onPressed: () async {
-            Navigator.pop(this.context, true);
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.redAccent.shade200,
-            elevation: 5,
-          ),
-          child: Text('Yes'),
-        ),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.pop(this.context);
-          },
-          style: ElevatedButton.styleFrom(
-            // backgroundColor: Colors.redAccent.shade200,
-            elevation: 5,
-          ),
-          child: Text('Cancel'),
-        ),
-      ],
-    );
+      widget.pageController.jumpToPage(widget.currentPage + 1);
+    }
   }
 }
+
+// Future<void> _finalSubmitForm() async {
+//   await widget.provider.saveDraftData().then(
+//         (value) async {
+//       // update status
+//       await FirestoreServices.updateAssignmentStatus(
+//         caseId: widget.provider.assignmentId,
+//         status: 'submitted',
+//         agencyId: widget.agencyId,
+//       );
+//     },
+//   );
+// }
+
+// Widget _showFinalSubmitAlertDialog() {
+//   return AlertDialog(
+//     shape: RoundedRectangleBorder(
+//       borderRadius: BorderRadius.circular(10),
+//     ),
+//     content: Text(
+//       'Are you sure to submit form? Once submitted you can\'t edit form.Please Re-Check the form.',
+//       style: TextStyle(
+//         fontSize: 18,
+//         fontWeight: FontWeight.w500,
+//       ),
+//     ),
+//     actions: [
+//       ElevatedButton(
+//         onPressed: () async {
+//           Navigator.pop(this.context, true);
+//         },
+//         style: ElevatedButton.styleFrom(
+//           backgroundColor: Colors.redAccent.shade200,
+//           elevation: 5,
+//         ),
+//         child: Text('Yes'),
+//       ),
+//       ElevatedButton(
+//         onPressed: () {
+//           Navigator.pop(this.context);
+//         },
+//         style: ElevatedButton.styleFrom(
+//           // backgroundColor: Colors.redAccent.shade200,
+//           elevation: 5,
+//         ),
+//         child: Text('Cancel'),
+//       ),
+//     ],
+//   );
+// }
