@@ -27,20 +27,20 @@ class _TextTitleState extends State<TextTitle> {
       alignment: Alignment.topLeft,
       padding: const EdgeInsets.all(15),
       margin: const EdgeInsets.only(bottom: 15),
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: Colors.grey.shade300,
-        ),
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.shade300,
-            offset: const Offset(0.0, 0.0), //(x,y)
-            blurRadius: 0.5,
-          ),
-        ],
-      ),
+      // decoration: BoxDecoration(
+      //   border: Border.all(
+      //     color: Colors.grey.shade300,
+      //   ),
+      //   color: Colors.grey.shade200,
+      //   borderRadius: BorderRadius.circular(10),
+      //   boxShadow: [
+      //     BoxShadow(
+      //       color: Colors.grey.shade300,
+      //       offset: const Offset(0.0, 0.0), //(x,y)
+      //       blurRadius: 0.5,
+      //     ),
+      //   ],
+      // ),
       child: Column(
         crossAxisAlignment:
             _isHeading ? CrossAxisAlignment.center : CrossAxisAlignment.end,
@@ -50,7 +50,7 @@ class _TextTitleState extends State<TextTitle> {
                   child: Text(
                     widget.widgetData['label'],
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 19,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -58,13 +58,10 @@ class _TextTitleState extends State<TextTitle> {
               : Text(
                   widget.widgetData['label'],
                   style: const TextStyle(
-                    fontSize: 16,
+                    fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
-          // const SizedBox(
-          //   height: 25,
-          // ),
         ],
       ),
     );

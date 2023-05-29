@@ -1,14 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../app_provider/form_provider.dart';
-import '../app_utils/app_constants.dart';
+import '../../app_provider/form_provider.dart';
+import '../../form_screens/form_constants.dart';
 
-class FormTextInput extends StatefulWidget {
+class FormTextResultDisplay extends StatefulWidget {
   final Map<String, dynamic> widgetJson;
   final FormProvider provider;
   final String pageId;
   final String fieldId;
-  const FormTextInput({
+  const FormTextResultDisplay({
     Key? key,
     required this.pageId,
     required this.fieldId,
@@ -17,22 +19,16 @@ class FormTextInput extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<FormTextInput> createState() => _FormTextInputState();
+  State<FormTextResultDisplay> createState() => _FormTextResultDisplayState();
 }
 
-class _FormTextInputState extends State<FormTextInput> {
+class _FormTextResultDisplayState extends State<FormTextResultDisplay> {
   late TextEditingController _textEditingController;
 
   @override
   void initState() {
     _textEditingController = TextEditingController();
-    String? data =
-        widget.provider.getResult['${widget.pageId},${widget.fieldId}'];
-
-    if (data != null) {
-      _textEditingController.text = data;
-    }
-
+    setResult();
     super.initState();
   }
 
@@ -43,7 +39,7 @@ class _FormTextInputState extends State<FormTextInput> {
       text: TextSpan(
         text: '$label',
         style: const TextStyle(
-          fontSize: 17,
+          fontSize: kLabelFontSize - 1,
           fontWeight: FontWeight.w500,
           color: Colors.black,
         ),
@@ -54,8 +50,8 @@ class _FormTextInputState extends State<FormTextInput> {
               text: ' *',
               style: TextStyle(
                 color: Colors.red.shade400,
-                fontSize: 18.0,
-                fontWeight: FontWeight.bold,
+                fontSize: kLabelFontSize - 2,
+                fontWeight: FontWeight.w400,
               ),
             ),
         ],
@@ -63,12 +59,27 @@ class _FormTextInputState extends State<FormTextInput> {
     );
   }
 
+  void setResult() {
+    String? data;
+    debugPrint('pageId-> ${widget.pageId}, fieldId-> ${widget.fieldId}');
+    if (widget.widgetJson['widget'] == 'dropdown') {
+      data = widget
+          .provider.getResult['${widget.pageId},${widget.fieldId}']['value']
+          .toString();
+    } else {
+      data = widget.provider.getResult['${widget.pageId},${widget.fieldId}']
+          .toString();
+    }
+
+    _textEditingController.text = data ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(15),
-      margin: const EdgeInsets.only(bottom: 15),
-      decoration: containerElevationDecoration,
+      padding: const EdgeInsets.all(10),
+      margin: const EdgeInsets.only(bottom: 10),
+      decoration: BoxDecoration(),
       child: FormField(
         autovalidateMode: AutovalidateMode.onUserInteraction,
         initialValue: _textEditingController,
@@ -85,30 +96,14 @@ class _FormTextInputState extends State<FormTextInput> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _getLabel(),
               const SizedBox(
                 height: 10,
               ),
-              _getLabel(),
-              const SizedBox(
-                height: 25,
-              ),
-              TextField(
-                controller: _textEditingController,
-                onChanged: (val) {
-                  // widget.provider.updateData(
-                  //     pageId: widget.pageId,
-                  //     fieldId: widget.fieldId,
-                  //     value: _textEditingController.text);
-                  formState.didChange(_textEditingController);
-                },
-                minLines: 1,
-                maxLines: widget.widgetJson['multi_line'] ?? false ? 7 : 1,
-                maxLength: widget.widgetJson['length'],
-                decoration: InputDecoration(
-                  focusedBorder: InputBorder.none,
-                  hintText: 'Your Answer',
-                  hintStyle: kHintTextStyle,
-                  isDense: true, // Added this
+              Text(
+                _textEditingController.text.toString(),
+                style: TextStyle(
+                  fontSize: 14,
                 ),
               ),
               if (formState.hasError)

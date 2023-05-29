@@ -5,6 +5,14 @@ class FormProvider extends ChangeNotifier {
   Map<String, dynamic> _result = {};
   get getResult => _result;
 
+  List<dynamic> _pages = [];
+  get getPages => _pages;
+
+  /// all pages ui data to be build (currently used in formResultPreviewPage)
+  void set setPagesData(List<dynamic> pagesData) {
+    this._pages = pagesData;
+  }
+
   /// for the assignment id
   String _assignmentId = '';
   String get assignmentId => _assignmentId;
@@ -17,20 +25,20 @@ class FormProvider extends ChangeNotifier {
   void set setAgencyId(String id) {
     this._agencyId = id;
   }
-  // updateData(
-  //     {required String pageId,
-  //     required String fieldId,
-  //     String? rowId,
-  //     String? columnId,
-  //     String? type,
-  //     required dynamic value}) {
-  //   if (rowId != null && columnId != null) {
-  //     _result['$pageId,$fieldId,$rowId,$columnId'] = value;
-  //   } else {
-  //     _result['$pageId,$fieldId'] = value;
-  //     debugPrint('$_result\n\n');
-  //   }
-  // }
+
+  updateData(
+      {required String pageId,
+      required String fieldId,
+      String? rowId,
+      String? columnId,
+      String? type,
+      required dynamic value}) {
+    if (rowId != null && columnId != null) {
+      _result['$pageId,$fieldId,$rowId,$columnId'] = value;
+    } else {
+      _result['$pageId,$fieldId'] = value;
+    }
+  }
 
   refreshData() {
     _result.removeWhere((key, value) => value == "");
@@ -38,6 +46,8 @@ class FormProvider extends ChangeNotifier {
 
   clearResult() {
     _result = {};
+    _agencyId = '';
+    _assignmentId = '';
   }
 
   Future<void> initializeResponse() async {
@@ -62,17 +72,17 @@ class FormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Future<void> saveDraftData() async {
-  //   try {
-  //     debugPrint('saving draft data: $_result\n\n');
-  //     await FirebaseFirestore.instance
-  //         .collection('assignments')
-  //         .doc(assignmentId)
-  //         .collection('form_data')
-  //         .doc('response')
-  //         .set(_result);
-  //   } catch (e) {
-  //     return;
-  //   }
-  // }
+  Future<void> saveDraftData() async {
+    try {
+      // debugPrint('saving draft data: $_result\n\n');
+      await FirebaseFirestore.instance
+          .collection('assignments')
+          .doc(assignmentId)
+          .collection('form_data')
+          .doc('response')
+          .set(_result);
+    } catch (e) {
+      return;
+    }
+  }
 }

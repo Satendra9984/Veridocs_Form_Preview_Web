@@ -1,22 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:veridocs_web_form_preview/form_preview.dart';
-import 'package:veridocs_web_form_preview/form_screens/form_result_home_page.dart';
-import 'package:veridocs_web_form_preview/form_screens/home_page.dart';
 
 import 'app_provider/form_provider.dart';
-import 'home_page.dart';
-// List<CameraDescription> cameras = [];
+import 'form_screens/form_home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // try {
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   // cameras = await availableCameras();
-  // } on CameraException catch (e) {
-  //   print('Error in fetching the cameras: $e');
-  // }
+
   const firebaseConfig = {
     'apiKey': "AIzaSyA0KGfaOxma0G8tbmB_PEydfbvC7g5eOr0",
     'authDomain': "veridox-68b89.firebaseapp.com",
@@ -64,7 +55,7 @@ class _VeridocsPreviewState extends State<VeridocsPreview> {
         title: 'Books App',
         // home: const HomePage(),
         routes: {
-          '/': (context) => FormResultHomePage(caseId: '20230515180'),
+          '/': (context) => const FormHomePage(caseId: '20233512802'),
         },
         onGenerateRoute: (settings) {
           // Handle '/'
@@ -80,21 +71,22 @@ class _VeridocsPreviewState extends State<VeridocsPreview> {
             var id = uri.pathSegments[1];
             debugPrint('id parsed -> $id');
             return MaterialPageRoute(
-                builder: (context) => FormPreviewHomePage(agencyId: id));
+                builder: (context) => FormHomePage(
+                      caseId: id,
+                    ));
           }
           if (uri.pathSegments.length == 2 &&
               uri.pathSegments.first == 'result') {
             var id = uri.pathSegments[1];
             debugPrint('id parsed -> $id');
             return MaterialPageRoute(
-                builder: (context) => FormResultHomePage(caseId: id));
+                builder: (context) => FormHomePage(
+                      caseId: id,
+                    ));
           }
-
-          // return MaterialPageRoute(builder: (context) => HomePage());
         },
         debugShowCheckedModeBanner: false,
       ),
     );
   }
 }
-// https://github.com/Satendra9984/Veridocs_Form_Preview_Web.git
