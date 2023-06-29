@@ -26,7 +26,7 @@ class FormImagePreviewDisplay extends StatefulWidget {
 
 class _FormImagePreviewDisplayState extends State<FormImagePreviewDisplay> {
   /// Actual images data
-  List<Uint8List> _imageFileList = [];
+  final List<Uint8List> _imageFileList = [];
 
   /// Because after taking photo build is called again so images are added already on top of existing images
   bool _isListsInitializedAlready = false;
@@ -34,7 +34,7 @@ class _FormImagePreviewDisplayState extends State<FormImagePreviewDisplay> {
   /// to take count of lengths index of images
 
   /// Images paths list for adding in form response data
-  List<String> _imageFileListPaths = [];
+  final List<String> _imageFileListPaths = [];
 
   /// Get Initial Images From FirebaseStorage
   Future<void> _setInitialImagesData() async {
@@ -51,7 +51,7 @@ class _FormImagePreviewDisplayState extends State<FormImagePreviewDisplay> {
       }
 
       if (imageList.isNotEmpty) {
-        var ref = await FirebaseStorage.instance.ref();
+        var ref = FirebaseStorage.instance.ref();
         _imageFileList.clear();
         _imageFileListPaths.clear();
         for (var path in imageList) {
@@ -82,8 +82,8 @@ class _FormImagePreviewDisplayState extends State<FormImagePreviewDisplay> {
 
     return RichText(
       text: TextSpan(
-        text: '$label',
-        style: TextStyle(
+        text: label,
+        style: const TextStyle(
           fontWeight: FontWeight.w500,
           color: Colors.black,
           fontSize: kLabelFontSize,
@@ -106,6 +106,7 @@ class _FormImagePreviewDisplayState extends State<FormImagePreviewDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       margin: const EdgeInsets.only(bottom: 15),
@@ -123,19 +124,18 @@ class _FormImagePreviewDisplayState extends State<FormImagePreviewDisplay> {
               children: [
                 /// Title
                 _getLabel(),
-                const SizedBox(
-                  height: 15,
-                ),
+                const SizedBox(height: 15),
 
                 /// Display Images
                 if (_imageFileList.isNotEmpty)
                   ListView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: _imageFileList.length,
                     itemBuilder: (context, index) {
                       return Container(
-                        margin: EdgeInsets.only(bottom: 10),
+                        alignment: Alignment.center,
+                        margin: const EdgeInsets.only(bottom: 10),
                         decoration: BoxDecoration(
                           border: Border.all(
                             color: Colors.grey.shade300,
@@ -157,8 +157,6 @@ class _FormImagePreviewDisplayState extends State<FormImagePreviewDisplay> {
                               : Image.memory(
                                   _imageFileList[index],
                                   fit: BoxFit.contain,
-                                  height: 80,
-                                  width: 150,
                                 ),
                         ),
                       );
@@ -181,7 +179,7 @@ class _FormImagePreviewDisplayState extends State<FormImagePreviewDisplay> {
           children: [
             Text(
               'Image ${index + 1}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w500,
               ),

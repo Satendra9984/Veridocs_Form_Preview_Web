@@ -7,7 +7,7 @@ import '../../app_utils/pick_file/pick_file.dart';
 class FileUploader {
   static Future<UploadTask?> uploadSingleFileToFirebase(
     String dbPath, {
-    List<String> fileExtensions: const ['pdf', 'jpg'],
+    List<String> fileExtensions = const ['pdf', 'jpg'],
   }) async {
     return await PickFile.pickFileAndGetPath(fileExtensions: fileExtensions)
         .then((file) async {

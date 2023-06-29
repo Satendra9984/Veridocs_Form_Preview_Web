@@ -6,34 +6,30 @@ import '../app_provider/form_provider.dart';
 import '../app_services/database/firestore_services.dart';
 import 'form_result_page.dart';
 
-class FormHomePage extends StatefulWidget {
-  static String FormHomePageRouteName = '/form_home_page';
+class FormReviewHomePage extends StatefulWidget {
+  static String FormHomePageRouteName = '/form_review_home_page';
   final String caseId;
-  const FormHomePage({
+  const FormReviewHomePage({
     required this.caseId,
     Key? key,
   }) : super(key: key);
 
   @override
-  State<FormHomePage> createState() => _FormHomePageState();
+  State<FormReviewHomePage> createState() => _FormReviewHomePageState();
 }
 
-class _FormHomePageState extends State<FormHomePage> {
+class _FormReviewHomePageState extends State<FormReviewHomePage> {
   late FormProvider _formProvider;
   late PageController _pageController;
 
   @override
   void initState() {
-    // debugPrint('home page has been activated');
     _pageController = PageController();
     super.initState();
   }
 
   @override
   void deactivate() {
-    // debugPrint('home page has been deactivated');
-    // _formProvider.dispose();
-
     super.deactivate();
   }
 
@@ -91,25 +87,25 @@ class _FormHomePageState extends State<FormHomePage> {
     List<Widget> screen = [];
 
     List<dynamic> pageData = form['data'] ?? [];
-    pageData.add({
-      "name": "new page",
-      "id": pageData.length,
-      "fields": [
-        {
-          "widget": "signature",
-          "id": 0,
-          "label": "signature",
-          "required": true,
-        },
-        {
-          "widget": "text-input",
-          "id": 1,
-          "label": "text input",
-          "required": true
-        },
-        {"widget": "address", "label": "address", "id": 2, "required": true},
-      ],
-    });
+    // pageData.add({
+    //   "name": "new page",
+    //   "id": pageData.length,
+    //   "fields": [
+    //     {
+    //       "widget": "signature",
+    //       "id": 0,
+    //       "label": "signature",
+    //       "required": true,
+    //     },
+    //     {
+    //       "widget": "text-input",
+    //       "id": 1,
+    //       "label": "text input",
+    //       "required": true
+    //     },
+    //     {"widget": "address", "label": "address", "id": 2, "required": true},
+    //   ],
+    // });
 
     screen.add(
       FormResultPreviewPage(
@@ -118,6 +114,7 @@ class _FormHomePageState extends State<FormHomePage> {
         totalPages: pageData.length + 1,
         pageController: _pageController,
         agencyId: _formProvider.agencyId,
+        showNavigationOptions: false,
       ),
     );
     _formProvider.setPagesData = pageData;

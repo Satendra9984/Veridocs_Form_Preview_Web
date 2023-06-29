@@ -9,21 +9,21 @@ class FormProvider extends ChangeNotifier {
   get getPages => _pages;
 
   /// all pages ui data to be build (currently used in formResultPreviewPage)
-  void set setPagesData(List<dynamic> pagesData) {
-    this._pages = pagesData;
+  set setPagesData(List<dynamic> pagesData) {
+    _pages = pagesData;
   }
 
   /// for the assignment id
   String _assignmentId = '';
   String get assignmentId => _assignmentId;
-  void set setAssignmentId(String id) {
-    this._assignmentId = id;
+  set setAssignmentId(String id) {
+    _assignmentId = id;
   }
 
   String _agencyId = '';
   String get agencyId => _agencyId;
-  void set setAgencyId(String id) {
-    this._agencyId = id;
+  set setAgencyId(String id) {
+    _agencyId = id;
   }
 
   updateData(

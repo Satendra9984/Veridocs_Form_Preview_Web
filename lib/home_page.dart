@@ -6,7 +6,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text('home page'),
+      child: const Text('home page'),
     );
   }
 }

@@ -57,6 +57,7 @@ dependencies:
   google_maps_flutter_web: ^0.4.0+3
   url_launcher: ^6.1.7
   open_file_plus: ^3.4.1
+  google_maps_flutter: ^2.2.0
 
 dev_dependencies:
   flutter_test:

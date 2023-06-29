@@ -1,9 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import 'app_provider/form_provider.dart';
-import 'form_screens/form_home_page.dart';
+import 'form_screens/form_review_home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -53,13 +52,11 @@ class _VeridocsPreviewState extends State<VeridocsPreview> {
       providers: [ChangeNotifierProvider(create: (context) => FormProvider())],
       child: MaterialApp(
         title: 'Books App',
-        // home: const HomePage(),
         routes: {
-          '/': (context) => const FormHomePage(caseId: '20233512802'),
+          '/': (context) => const FormReviewHomePage(caseId: '20233512802'),
         },
         onGenerateRoute: (settings) {
           // Handle '/'
-          debugPrint('onGenerateRoute\n');
           // if (settings.name == '/') {
           //   return MaterialPageRoute(builder: (context) => HomePage());
           // }
@@ -71,19 +68,16 @@ class _VeridocsPreviewState extends State<VeridocsPreview> {
             var id = uri.pathSegments[1];
             debugPrint('id parsed -> $id');
             return MaterialPageRoute(
-                builder: (context) => FormHomePage(
-                      caseId: id,
-                    ));
+                builder: (context) => FormReviewHomePage(caseId: id));
           }
           if (uri.pathSegments.length == 2 &&
               uri.pathSegments.first == 'result') {
             var id = uri.pathSegments[1];
             debugPrint('id parsed -> $id');
             return MaterialPageRoute(
-                builder: (context) => FormHomePage(
-                      caseId: id,
-                    ));
+                builder: (context) => FormReviewHomePage(caseId: id));
           }
+          return null;
         },
         debugShowCheckedModeBanner: false,
       ),

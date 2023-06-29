@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:flutter/rendering.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SPServices {
@@ -70,7 +69,7 @@ class SPServices {
   /// get data from local storage
   static Future<Uint8List?> getData(String path) async {
     final prefs = await SharedPreferences.getInstance();
-    String? imageString = await prefs.getString(path);
+    String? imageString = prefs.getString(path);
 
     if (imageString != null) {
       Uint8List byteData = base64Decode(imageString);

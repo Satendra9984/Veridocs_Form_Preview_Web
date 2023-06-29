@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -43,32 +45,9 @@ Color getStatusColour(String status) {
   }
   return Colors.redAccent.shade700;
 }
-// Widget _getLabel() {
-//   String label = widget.widgetJson['label'];
-//
-//   return Row(
-//     mainAxisSize: MainAxisSize.min,
-//     children: [
-//       Text(
-//         label,
-//         softWrap: true,
-//         style: const TextStyle(
-//           fontSize: 17,
-//           fontWeight: FontWeight.w500,
-//         ),
-//       ),
-//       SizedBox(width: 5),
-//       if (widget.widgetJson.containsKey('required') &&
-//           widget.widgetJson['required'] == true)
-//         Text(
-//           '*',
-//           softWrap: true,
-//           style: TextStyle(
-//             fontSize: 20,
-//             fontWeight: FontWeight.w500,
-//             color: Colors.redAccent.shade200,
-//           ),
-//         ),
-//     ],
-//   );
-// }
+
+String prettyJson(dynamic json) {
+  var spaces = ' ' * 4;
+  var encoder = JsonEncoder.withIndent(spaces);
+  return encoder.convert(json);
+}

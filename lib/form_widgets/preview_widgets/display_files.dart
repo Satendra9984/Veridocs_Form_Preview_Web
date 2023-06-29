@@ -1,3 +1,4 @@
+import 'dart:html';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:future_progress_dialog/future_progress_dialog.dart';
@@ -42,7 +43,6 @@ class _FormFileDisplayState extends State<FormFileDisplay> {
     double width = size.width;
     int wid = width.toInt();
     int count = (wid) ~/ 150;
-    // debugPrint('count --> $count');
     return count;
   }
 
@@ -80,14 +80,12 @@ class _FormFileDisplayState extends State<FormFileDisplay> {
 
       List<dynamic> filesList =
           List<dynamic>.from(listOfImagesFromDatabase ?? []);
-      debugPrint("listOffiles from database: $listOfImagesFromDatabase");
       if (filesList.isNotEmpty) {
         for (String stref in filesList) {
           _filesList.add(stref);
         }
       }
       _isListsInitializedAlready = true;
-      debugPrint("files length: ${_filesList.length}");
     }
   }
 
@@ -109,21 +107,17 @@ class _FormFileDisplayState extends State<FormFileDisplay> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _getLabel(),
-                const SizedBox(
-                  height: 15,
-                ),
+                const SizedBox(height: 15),
                 if (_filesList.isNotEmpty && _filesList.isNotEmpty)
                   GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: _filesList.length,
                     itemBuilder: (context, index) {
                       return Container(
                         alignment: Alignment.topCenter,
                         decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.grey.shade300,
-                          ),
+                          border: Border.all(color: Colors.grey.shade300),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
@@ -131,17 +125,13 @@ class _FormFileDisplayState extends State<FormFileDisplay> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(width: 2.5),
-                            Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(
-                                  Icons.file_copy_sharp,
-                                  color: Colors.redAccent,
-                                  size: 16,
-                                ),
-                                SizedBox(height: 2),
-                              ],
+                            const Padding(
+                              padding: EdgeInsets.all(3.0),
+                              child: Icon(
+                                Icons.file_copy_sharp,
+                                color: Colors.redAccent,
+                                size: 16,
+                              ),
                             ),
                             const SizedBox(width: 2.5),
                             TextButton(
@@ -160,9 +150,6 @@ class _FormFileDisplayState extends State<FormFileDisplay> {
                                   ),
                                 );
                               },
-                              style: ButtonStyle().copyWith(
-                                alignment: Alignment.topCenter,
-                              ),
                               child: Text(
                                 'File ${index + 1}',
                                 style: const TextStyle(
@@ -224,17 +211,9 @@ class _FormFileDisplayState extends State<FormFileDisplay> {
         .child(_filesList[index])
         .getDownloadURL();
 
-    http.get(Uri.parse(ref)).then((response) async {
-      Uint8List bodyBytes = response.bodyBytes;
-      final dir = await getExternalStorageDirectory();
-      String fileExtension = await _getFileExtension(index);
-      final myImagePath = "${dir!.path}/myfile$fileExtension";
-      File imageFile = File(myImagePath);
-      if (!await imageFile.exists()) {
-        imageFile.create(recursive: true);
-      }
-      imageFile.writeAsBytes(bodyBytes);
-      await OpenFile.open(imageFile.path);
-    });
+    // window.open(ref.toString(), '_blank');
+    final anchor = AnchorElement(href: ref.toString());
+    anchor.target = '_blank';
+    anchor.click();
   }
 }
